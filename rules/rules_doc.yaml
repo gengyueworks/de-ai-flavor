@@ -33,7 +33,8 @@ banned_words:        # 禁用词表：word + 替换建议 + severity
   - {word: "底层逻辑", replace: "换成具体原因", severity: warn}
   - {word: "颗粒度", replace: "换成具体程度", severity: warn}
   - {word: "落地", replace: "换成具体动作（做成/上线/跑通）", severity: warn}
-  # 编辑腔禁词（来自 editorial-core.md）：带货腔 block，常见空形容词 warn
+  # 编辑腔禁词（来自 Notion「去 AI 味道 & 增强活人感」指令块 + editorial-core.md）：
+  # 短视频带货腔 block，常见空形容词 warn（触发即视为失败）
   - {word: "最牛", replace: "删掉，换具体事实", severity: block}
   - {word: "闭眼冲", replace: "删掉，换具体事实", severity: block}
   - {word: "神器", replace: "删掉，换具体描述", severity: block}
@@ -61,3 +62,20 @@ patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 
   - {pattern: "([\\u4e00-\\u9fff])(?:[^、。，\\n]{0,12}、)(?:\\1[^、。，\\n]{0,12}、){1,}", note: "同字开头排比堆砌", severity: warn}
   - {pattern: "^让我们", note: "命令式套话开头", severity: block}
   - {pattern: "Story|Why it matters|Context", note: "百科三段论标题（Story/Why it matters/Context），拒绝呆板三段论格式", severity: warn}
+
+# 活人感规则（来自 Notion「去 AI 味道 & 增强活人感」指令块）
+humanity:
+  max_exclamation: 1              # 全篇感叹号最多 1 个，尽量用句号结尾
+  max_hashtag: 2                  # 文末标签不超过 1-2 个
+  reaction_patterns:              # 活人感核心公式「反应 > 事实」：主观反应动作句式
+    - "我翻到了"
+    - "我没想到"
+    - "大多数人记错了"
+    - "我不喜欢"
+    - "这让我想起"
+    - "我注意到"
+    - "我发现"
+    - "让我惊讶"
+    - "我好奇"
+    - "我觉得"
+  reaction_min_count: 1           # 全文至少出现 1 个主观反应句式，否则活人感不足

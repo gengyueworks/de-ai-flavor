@@ -318,6 +318,7 @@ def render_report(text, rules):
     banned_words = rules.get("banned_words", []) or []
     banned_punct = rules.get("banned_punctuation", []) or []
     patterns = rules.get("patterns", []) or []
+    humanity = rules.get("humanity") or {}
 
     block_w, warn_w = scan_words(text, banned_words)
     punct_hits = scan_punctuation(text, banned_punct)
@@ -329,7 +330,7 @@ def render_report(text, rules):
 
     if all_hits == 0:
         out.append("[de-ai-flavor] 未发现 AI 味问题，通过。")
-        stats = _stats_lines(text)
+        stats = _stats_lines(text, humanity)
         if stats:
             out.append("═══ 统计 ═══")
             out.extend(stats)
@@ -355,7 +356,7 @@ def render_report(text, rules):
         for h in warn_p:
             out.append(f"第{h['line']}行 | 套话模式「{h['match']}」 | {h.get('note', '')}")
 
-    stats = _stats_lines(text)
+    stats = _stats_lines(text, humanity)
     if stats:
         out.append("═══ 统计 ═══")
         out.extend(stats)
@@ -363,7 +364,7 @@ def render_report(text, rules):
     print("\n".join(out))
 
 
-def _stats_lines(text):
+def _stats_lines(text, humanity=None):
     lengths = sentence_lengths(text)
     if not lengths:
         return []
@@ -378,6 +379,27 @@ def _stats_lines(text):
         lines.append(f"⚠ 连续 {run} 句长度相近，节奏可能呆板，建议长短句交替")
     if spr:
         lines.append(f"短段落占比: {spr:.2f}")
+
+    # ---- 活人感规则（Notion「去 AI 味道 & 增强活人感」指令块） ----
+    humanity = humanity or {}
+    max_excl = humanity.get("max_exclamation", 1)
+    exclaim = text.count("！") + text.count("!")
+    if exclaim > max_excl:
+        lines.append(f"⚠ 感叹号 {exclaim} 个，超过上限 {max_excl} 个，尽量用句号结尾")
+
+    max_tag = humanity.get("max_hashtag", 2)
+    tags = re.findall(r"#[\w\u4e00-\u9fff]+", text)
+    if len(tags) > max_tag:
+        lines.append(f"⚠ 标签 {len(tags)} 个，超过上限 {max_tag} 个，文末标签不超过 1-2 个")
+
+    reaction_pats = humanity.get("reaction_patterns") or []
+    min_react = humanity.get("reaction_min_count", 1)
+    if reaction_pats:
+        react_found = [p for p in reaction_pats if p in text]
+        if len(react_found) < min_react:
+            lines.append("⚠ 全文没有「主观反应」句式（反应 > 事实），活人感不足。"
+                         "在陈述事实后加一句真实的个人反应，如：我翻到了 / 我没想到 / "
+                         "我不喜欢 / 这让我想起 / 我发现")
     return lines
 
 
