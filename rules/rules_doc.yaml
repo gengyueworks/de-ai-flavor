@@ -33,6 +33,18 @@ banned_words:        # 禁用词表：word + 替换建议 + severity
   - {word: "底层逻辑", replace: "换成具体原因", severity: warn}
   - {word: "颗粒度", replace: "换成具体程度", severity: warn}
   - {word: "落地", replace: "换成具体动作（做成/上线/跑通）", severity: warn}
+  # 编辑腔禁词（来自 editorial-core.md）：带货腔 block，常见空形容词 warn
+  - {word: "最牛", replace: "删掉，换具体事实", severity: block}
+  - {word: "闭眼冲", replace: "删掉，换具体事实", severity: block}
+  - {word: "神器", replace: "删掉，换具体描述", severity: block}
+  - {word: "狂斩", replace: "删掉，换具体数字", severity: block}
+  - {word: "家人们", replace: "删掉，直接对读者说话", severity: block}
+  - {word: "塑料感", replace: "删掉，换具体描述", severity: block}
+  - {word: "编辑级", replace: "删掉，换具体描述", severity: block}
+  - {word: "令人惊叹", replace: "删掉，给出证据", severity: block}
+  - {word: "不可思议", replace: "删掉，给出证据", severity: block}
+  - {word: "优雅", replace: "删掉或给出具体依据", severity: warn}
+  - {word: "强大", replace: "删掉或给出具体依据", severity: warn}
 
 banned_punctuation:  # 禁用标点：char + 替换建议
   - {char: "：", replace: "，或「」", note: "冒号用逗号代替"}
@@ -48,3 +60,4 @@ patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 
   - {pattern: "首先[^，。]*其次[^，。]*最后", note: "过度结构化套话", severity: warn}
   - {pattern: "([\\u4e00-\\u9fff])(?:[^、。，\\n]{0,12}、)(?:\\1[^、。，\\n]{0,12}、){1,}", note: "同字开头排比堆砌", severity: warn}
   - {pattern: "^让我们", note: "命令式套话开头", severity: block}
+  - {pattern: "Story|Why it matters|Context", note: "百科三段论标题（Story/Why it matters/Context），拒绝呆板三段论格式", severity: warn}

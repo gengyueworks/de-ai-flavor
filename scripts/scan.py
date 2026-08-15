@@ -370,7 +370,10 @@ def _stats_lines(text):
     dist = sentence_dist(lengths)
     run = longest_similar_run(lengths)
     spr = short_paragraph_ratio(text)
+    exclaim = text.count("！") + text.count("!")
     lines = [f"平均句长: {dist['avg_len']} 字 | 连续相近句最长: {run} 句"]
+    if exclaim > 1:
+        lines.append(f"⚠ 感叹号 {exclaim} 个，超过上限 1 个（编辑腔规范），建议用句号结尾")
     if run >= 5:
         lines.append(f"⚠ 连续 {run} 句长度相近，节奏可能呆板，建议长短句交替")
     if spr:
