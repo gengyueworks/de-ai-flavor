@@ -387,6 +387,13 @@ def _stats_lines(text, humanity=None):
     if exclaim > max_excl:
         lines.append(f"⚠ 感叹号 {exclaim} 个，超过上限 {max_excl} 个，尽量用句号结尾")
 
+    # AI 创作特征：句号高频（正常写作逗号频率远高于句号，AI 相反）
+    periods = text.count("。")
+    commas = text.count("，")
+    if periods >= 3 and periods > commas:
+        lines.append(f"⚠ 句号 {periods} 个 > 逗号 {commas} 个：句号高频是 AI 典型特征，"
+                     f"正常写作逗号使用频率远高于句号，建议拆开长句、多用逗号衔接")
+
     max_tag = humanity.get("max_hashtag", 2)
     tags = re.findall(r"#[\w\u4e00-\u9fff]+", text)
     if len(tags) > max_tag:

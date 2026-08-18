@@ -56,7 +56,10 @@ banned_punctuation:  # 禁用标点：char + 替换建议
 patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 排比堆砌）
   - {pattern: "在当今[^，。]*的时代", note: "教科书式开头", severity: block}
   - {pattern: "随着[^，。]*的发展", note: "教科书式开头", severity: block}
-  - {pattern: "不是[^，。]{2,20}而是", note: "翻案腔：先立假靶子再推翻", severity: warn}
+  - {pattern: "不是[^，。]{2,30}，?而是", note: "翻案腔/否定式：不是A，而是B（先立假靶子再推翻）", severity: warn}
+  - {pattern: "不是[^，。]{2,20}，?是", note: "否定式表达：不是A，是B（AI 惯用，直接说 B 即可）", severity: warn}
+  - {pattern: "没有[^，。]{2,20}，?而?是", note: "否定式表达：没有A，是B（AI 惯用，直接说 B 即可）", severity: warn}
+  - {pattern: "先[^，。]{2,15}，?再[^，。]{2,15}，?然后", note: "过度工整：先xx，再xx，然后xx（AI 机械排比）", severity: warn}
   - {pattern: "不仅[^，。]{2,20}而且", note: "模板连词", severity: warn}
   - {pattern: "首先[^，。]*其次[^，。]*最后", note: "过度结构化套话", severity: warn}
   - {pattern: "([\\u4e00-\\u9fff])(?:[^、。，\\n]{0,12}、)(?:\\1[^、。，\\n]{0,12}、){1,}", note: "同字开头排比堆砌", severity: warn}
