@@ -1,75 +1,75 @@
-# AI 设计与交互去味指南 · How to Turn Your AI into a World-Class Designer
+# AI 设计与 Prompt 去味指南 · Design Prompts & Workflows
 
-本指南整理自 Anshu Chimala（前 Apple R&D 团队负责人）关于消除 AI 视觉与交互平庸味（AI slop）的核心方法论，适用于网页设计、前端 UI 生成及 AI 交互原型开发。
-
----
-
-## 为什么 AI 生成的设计总是充斥着“AI味”（AI Slop）？
-
-大语言模型本质上是 token 预测器：在每一步，它们都会预测最符合大众平均偏好的下一个 token。当模型做设计决策（颜色、布局、排版）时，它总是选择最不可能得罪任何人的安全选项。
-
-其结果就是：**极其平庸、千篇一律的视觉套路**（例如：紫粉色渐变、左侧文字+右侧插图、极度可预测的顶部导航栏）。
-
-而优秀的设计完全相反：它始于情绪与感官，通过打破规则和意想不到的选择带来惊喜。
+> 来自 Anshu Chimala（前 Apple AI 软件工程与设计负责人）在 Lenny's Newsletter 的实践经验与理论框架。
+> 将设计与交互去 AI 味的策略沉淀为可被 AI Agent / Designer 调用的标准规范。
 
 ---
 
-## 突破 AI 平庸设计的 3 大阶段与 7 种技术
+## 一、核心理论：为什么 AI 做设计容易产生「平庸套话」（AI Slop）？
 
-### 一、 探索阶段（Discover）：冲破可预测的框架
+1. **概率中枢陷阱**：
+   LLM 的本质是下一个 Token 的概率预测器。它们被训练去生成最安全、最符合大众平均审美的输出。在设计领域，这会导致模型极度依赖经典旧套路——如紫蓝渐变、左文右图卡片布局、居中大字标语。这种结果极其安全，但也极其无趣。
 
-#### 1. 种子字符串注入多样性 (Seed Strings of Thought)
-- **问题**：直接提示“给我一个独特的设计”无效，模型依然会返回预训练中的概率均值。
-- **解法**：通过脚本在外部生成一个长随机字符串（Seed String），让 AI 基于该字符串提取子模式/视觉灵感来定义设计语言。
-- **效果**：迫使模型从非概率均值的起点出发，每次生成完全独一无二的视觉构想。
+2. **设计始于情感而非规则**：
+   写代码和做分析依赖确定规则，但优秀的设计始于某种情绪与氛围，旨在引发用户的感官与心理共鸣。如果只是给模型简单的 Prompt（“画一个待办事项 App 页面”），模型只会做无味的平铺直述。
 
-#### 2. 大胆具体的 Prompt 激发审美性格
-- 带入具体的审美来源（如：“工业控制面板”、“80年代复古像素”、“极简包豪斯”）。
-- 不怕给出听起来“不可能成功”的规则破坏性要求。
+3. **越过平庸的边界**：
+   要获得大师级设计，必须逼迫模型跨越最可预测的选择，激活它底层庞大的“设计可能性空间”（Design Space of Possibilities）。
 
 ---
 
-### 二、 定型阶段（Define）：深化设计个性
+## 二、去 AI 设计 7 大核心技巧与工作流
 
-#### 3. 引入“设计批评者”双 Agent 循环 (Design Critic Loop)
-- **痛点**：生成代码的 Agent 无法客观评价自己的产出。
-- **解法**：引入一个强模型（如 Claude Opus / Fable）作为独立 Critic。
-- **规则**：
-  - Critic 处于干净全新的上下文，**只看视觉截图，不看底层代码**。
-  - Critic 针对预设的设计目标打分（满分10分），列出最显 AI 味的平庸套路并要求整改。
-  - 只有独立打分达到 9 分以上，代码 Agent 的任务才算完成。
+### 1. 种子字符串注入多样性 (Seed Strings)
+- **原理**：模型自身无法产生真正的物理随机。在 Prompt 中注入由 Shell / 外部生成的长随机字符串（Random String），强制模型基于该 Seed 推导配色、时代感与视觉主题。
+- **Agent 操作规范**：
+  ```bash
+  # 运行 Shell 生成随机种子
+  SEED=$(openssl rand -hex 16)
+  ```
+  在 Prompt 中指示模型：“基于此 Seed `SEED_STRING` 定义配色、布局与字体风格，不要在 UI 上直接暴露 Seed，仅用作视觉方向推导。”
 
-#### 4. 融合生成式图像与动态视效
-- 拒绝纯靠 CSS 代码渐变和符号撑场面，提示 Agent 合理调用图像生成 API 或 Shader 特效。
+### 2. 在 Prompt 中下更狠的视觉设定 (Ambitious Prompts)
+- **原理**：告别通用抽象词（如“优雅、极简、大气”），使用极度具体甚至看似野蛮的工业/艺术流派约束（如“等轴测 3D 活体城市”、“打破常规的非对称布局”、“复古像素画结合拟真阴影”）。
+- **人机协同 3 步生成法**：
+  1. 让 AI 批量列出不加细节的流派/领域清单，仅用来激活灵感。
+  2. 挑选目标方向，加入你个人的**主观偏好与反应**（“我喜欢触感但讨厌低俗拟物”）。
+  3. 让 AI 将调整后的品味总结为一条精炼的原型 Prompt。
 
-#### 5. 使用视频生成模型打造流体交互与过渡
-- 利用视频生成模型在两个 Keyframe 页面状态之间做插值，实现随着用户滚动或交互而平滑蜕变的视觉动态。
+### 3. 用 Subagent 打造正向反馈闭环 (Critic Loop)
+- **原理**：写代码/内容的 Agent 往往无法客观评估自身的输出。引入一个独立的 **Critic Subagent**（评审员），形成“生成 - 独立无代码评审 - 重新迭代”闭环。
+- **架构规范**：
+  - 代码 Agent 修改代码并截图。
+  - 在**全新的上下文**中启动 Critic Subagent，只给看截图，不给看代码或原始 Prompt。
+  - 指示 Critic：“评估当前视觉，对比顶级设计工作室标杆，给出精准建议与 1-10 分打分。警惕任何 AI 废稿味/紫蓝渐变套路。”
+  - 只有 Critic 打分 ≥ 9/10 时，迭代才终止。
+  - **成本控制**：Critic 使用推理与视觉最强的顶配模型（如 Opus/Fable），代码执行使用快速模型，Token 消耗极低且效果陡升。
+
+### 4. 显式结合生图模型丰富视觉细节 (Image Generation)
+- **原理**：代码 Agent 习惯只写 CSS，容易造成页面干瘪干燥。强行要求 Agent 调用生图 API（DALL-E 3, Midjourney, Flux, SD）生成专属材质、3D 视效、Shader 纹理或背景。
+- **操作**：Agent 在后台静默运行生图脚本，生成图片后替换 CSS 通用卡片，大幅拉升视觉层次。
+
+### 5. 引入生视频模型实现高级动效 (Video Generation & Transitions)
+- **原理**：将视频模型（Runway, Luma, Kling, Seedance）引入交互。
+- **应用场景**：
+  - **动态背景/小构件**：生成纯色背景的光影流动/玻璃折射视频，通过 CSS 混合模式（`mix-blend-mode`）或透明通道嵌入。
+  - **状态过渡动效**：指定交互的首帧与尾帧，用视频模型插值生成极度平滑的滚动/点击过渡动画。
+
+### 6. 果断做减法，裁掉无价值元素 (Pruning & De-cluttering)
+- **原理**：AI 极度喜欢无节制地增加修饰（荧光发光、多余容器框、无意义渐变），但极少主动做减法。
+- **去 AI 减法规则**：
+  - 砍掉所有发光渐变、荧光边框与毫无深度的阴影。
+  - 砍掉所有冗余标签与空容器框。
+  - 保持极致的留白与聚焦，让视觉焦点回归内容本身（Apple 原生质感）。
+
+### 7. 全面清除 AI 味指纹 (AI Tells Removal)
+- **原理**：在最后交付前，执行代码与文本自动化扫描，清除特定 AI 标志性痕迹（紫蓝渐变、左文右图双栏模板、套话形容词）。
 
 ---
 
-### 三、 交付阶段（Deliver）：精细化去味与打磨
+## 三、融入 de-ai-flavor 系统的执行门禁
 
-#### 6. 果断做减法（Cut Out Non-Value Elements）
-- AI 的天性是不断做加法（加发光、加渐变、加多余标签、加无意义容器）。
-- **去 AI 味的核心在于删除**：去掉所有对传递核心信息没有帮助的装饰，保留纯粹的排版与空间感。
-
-#### 7. 彻底清除 AI 视觉标志（Remove AI Tells）
-- 审查并剔除：
-  - 紫色/粉色渐变气泡
-  - 无理由的深色暗黑卡片+发光边框
-  - 呆板的左文右图双栏响应式模板
-  - 虚假中立、过度解释的文字提示
-
----
-
-## 实践 Prompt 模板
-
-```markdown
-I want you to improve this design using a dual-agent feedback loop.
-
-Follow this procedure at each iteration:
-1. Capture a screenshot of the current design.
-2. Invoke the critic in a fresh context with ONLY the screenshot (no code/history).
-3. Evaluate against top design studio standards, penalize any generic AI-generated patterns (e.g. purple gradients, repetitive cards, predictable layouts).
-4. Provide a strict score out of 10. Only stop when score is >= 9/10.
-```
+在执行网页/应用设计、AI 代码生成或排版润色时，Agent 必须将本指南与 `prompts/editorial-core.md` 结合：
+- **无 Seed 不多样**：生成多方案对比时必须使用 Seed 注入。
+- **双 Agent 门禁**：高要求设计必须通过视觉 Critic 9 分校验方可交付。
+- **减法原则**：检查并清理多余 CSS 荧光/渐变效果，保留高质感实体。

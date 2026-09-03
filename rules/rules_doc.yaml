@@ -1,14 +1,15 @@
-# rules_doc.yaml — doc 通用层规则：文档快速去 AI 味
-# 场景：报告、邮件、说明文等日常文档
-# 规则来源：项目内已有规则资产与公开社区去 AI 味实践
+# rules_doc.yaml — doc 通用层规则：文档与设计去 AI 味
+# 场景：报告、邮件、说明文、AI 设计与提示词等
+# 规则来源：已有规则资产 + 公开社区去 AI 味实践 + Lenny's Newsletter (Anshu Chimala) AI 设计去味指导
 # severity: block = 绝对禁用（硬性违规） / warn = 建议（风格提示）
 
 meta:
   name: rules_doc
-  version: "1.0"
+  version: "1.1"
   source:
-    - "项目内已有规则资产（通用中文去味规则）"
-    - "公开社区去 AI 味实践"
+    - "通用中文去味规则"
+    - "Lenny's Newsletter: How to turn your AI into a world-class designer"
+    - "Anshu Chimala AI 设计去味体系"
 
 banned_words:        # 禁用词表：word + 替换建议 + severity
   - {word: "值得注意的是", replace: "删掉，直接说", severity: block}
@@ -33,8 +34,7 @@ banned_words:        # 禁用词表：word + 替换建议 + severity
   - {word: "底层逻辑", replace: "换成具体原因", severity: warn}
   - {word: "颗粒度", replace: "换成具体程度", severity: warn}
   - {word: "落地", replace: "换成具体动作（做成/上线/跑通）", severity: warn}
-  # 编辑腔禁词（来自 Notion「去 AI 味道 & 增强活人感」指令块 + editorial-core.md）：
-  # 短视频带货腔 block，常见空形容词 warn（触发即视为失败）
+  # 编辑腔与 UI 设计套话禁词（触发即视为失败）：
   - {word: "最牛", replace: "删掉，换具体事实", severity: block}
   - {word: "闭眼冲", replace: "删掉，换具体事实", severity: block}
   - {word: "神器", replace: "删掉，换具体描述", severity: block}
@@ -53,7 +53,7 @@ banned_punctuation:  # 禁用标点：char + 替换建议
   - {char: "“", replace: "「", note: "双引号用「」代替"}
   - {char: "”", replace: "」", note: "双引号用「」代替"}
 
-patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 排比堆砌）
+patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 排比堆砌 / 设计套话）
   - {pattern: "在当今[^，。]*的时代", note: "教科书式开头", severity: block}
   - {pattern: "随着[^，。]*的发展", note: "教科书式开头", severity: block}
   - {pattern: "不是[^，。]{2,30}，?而是", note: "翻案腔/否定式：不是A，而是B（先立假靶子再推翻）", severity: warn}
@@ -62,11 +62,15 @@ patterns:            # 正则模式（结构套话 / 翻案腔 / 模板连词 / 
   - {pattern: "先[^，。]{2,15}，?再[^，。]{2,15}，?然后", note: "过度工整：先xx，再xx，然后xx（AI 机械排比）", severity: warn}
   - {pattern: "不仅[^，。]{2,20}而且", note: "模板连词", severity: warn}
   - {pattern: "首先[^，。]*其次[^，。]*最后", note: "过度结构化套话", severity: warn}
-  - {pattern: "([\\u4e00-\\u9fff])(?:[^、。，\\n]{0,12}、)(?:\\1[^、。，\\n]{0,12}、){1,}", note: "同字开头排比堆砌", severity: warn}
+  - {pattern: '([\u4e00-\u9fff])(?:[^、。，\n]{0,12}、)(?:\1[^、。，\n]{0,12}、){1,}', note: "同字开头排比堆砌", severity: warn}
   - {pattern: "^让我们", note: "命令式套话开头", severity: block}
   - {pattern: "Story|Why it matters|Context", note: "百科三段论标题（Story/Why it matters/Context），拒绝呆板三段论格式", severity: warn}
+  # AI 设计指纹与套路检测（来自 Anshu Chimala 设计去味体系）：
+  - {pattern: "紫蓝渐变|紫色渐变", note: "AI 设计标志性平庸色彩套路，建议改用真实品牌调色或 Seed 推导", severity: warn}
+  - {pattern: "左侧标题.*右侧", note: "AI 呆板双栏卡片模版，建议打破对称或尝试非对称布局", severity: warn}
+  - {pattern: "发光粉色|荧光发光|装饰性阴影", note: "AI 常见的堆砌式装饰，建议果断做减法裁掉", severity: warn}
 
-# 活人感规则（来自 Notion「去 AI 味道 & 增强活人感」指令块）
+# 活人感规则（来自 Notion 指令块 + Lenny 设计去味）
 humanity:
   max_exclamation: 1              # 全篇感叹号最多 1 个，尽量用句号结尾
   max_hashtag: 2                  # 文末标签不超过 1-2 个
@@ -82,3 +86,8 @@ humanity:
     - "我好奇"
     - "我觉得"
   reaction_min_count: 1           # 全文至少出现 1 个主观反应句式，否则活人感不足
+  # AI 设计去味硬性原则（来自 Lenny 文章指南）：
+  design_principles:
+    - seed_injection: "生成视觉/UI方案时，使用随机 Seed 字符串打破 AI 固有通路上最佳概率点"
+    - critic_subagent: "生成端与评审端解耦，使用独立 Visual Critic 9分门禁"
+    - aggressive_pruning: "无节制堆砌修饰是 AI 特征，优质设计必须果断剔除多余渐变、发光与虚假包裹框"
